@@ -1,18 +1,10 @@
 import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [count, setCount] = useState(null);
   const [quote, setQuote] = useState(null);
   const [currentDate, setCurrentDate] = useState("");
 
   useEffect(() => {
-    async function fetchCount() {
-      const res = await fetch("/api/track");
-      const data = await res.json();
-      setCount(data.count);
-    }
-    fetchCount();
-
     const today = new Date();
     const todayStr = today.toISOString().split("T")[0];
     const formattedDate = today.toLocaleDateString(undefined, {
@@ -27,7 +19,7 @@ export default function Home() {
     if (lastQuoteDate !== todayStr) {
       async function fetchQuote() {
         try {
-          const res = await fetch("http://api.quotable.io/random");
+          const res = await fetch("https://api.quotable.io/random");
           const data = await res.json();
           setQuote({ text: data.content, author: data.author });
           localStorage.setItem("dailyQuote", JSON.stringify(data));
@@ -50,19 +42,16 @@ export default function Home() {
     <div className="container">
       <div className="card">
         <h1>
-          Quote for <span className="date">{currentDate}</span>
+          {" "}
+          Quote for <span className="date">{currentDate}</span>{" "}
         </h1>
-        {count !== null ? (
-          <>
-            <p></p>
-            {quote && (
-              <p className="quote">
-                “{quote.text}” — <span className="author">{quote.author}</span>
-              </p>
-            )}
-          </>
+        <p></p>
+        {quote ? (
+          <p className="quote">
+            “{quote.text}” — <span className="author">{quote.author}</span>
+          </p>
         ) : (
-          <p>Loading your visitor number...</p>
+          <p>Loading quote...</p>
         )}
       </div>
       <style jsx>{`
@@ -91,15 +80,6 @@ export default function Home() {
           margin-bottom: 1rem;
           font-size: 2.5rem;
           color: #ffffff;
-        }
-        .highlight {
-          font-size: 1.5rem;
-          margin: 1rem 0;
-        }
-        .number {
-          font-size: 2rem;
-          color: #00ffcc;
-          font-weight: bold;
         }
         .date {
           font-weight: bold;
