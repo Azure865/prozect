@@ -19,7 +19,7 @@ export default function Home() {
     if (lastQuoteDate !== todayStr) {
       async function fetchQuote() {
         try {
-          const res = await fetch("https://api.quotable.io/random");
+          const res = await fetch("http://api.quotable.io/random");
           const data = await res.json();
           setQuote({ text: data.content, author: data.author });
           localStorage.setItem("dailyQuote", JSON.stringify(data));
@@ -38,28 +38,15 @@ export default function Home() {
     }
   }, []);
 
-  const getWikipediaLink = (author) => {
-    const encodedAuthor = encodeURIComponent(author);
-    return `https://en.wikipedia.org/wiki/${encodedAuthor}`;
-  };
-
   return (
     <div className="container">
       <div className="card fade-in">
         <h1 className="slide-up">
-          Quote for <span className="date">{currentDate}</span>
+          Quotes for <span className="date">{currentDate}</span>
         </h1>
         {quote ? (
           <p className="quote slide-up">
-            “{quote.text}” —{" "}
-            <a
-              href={getWikipediaLink(quote.author)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="author"
-            >
-              {quote.author}
-            </a>
+            “{quote.text}” — <span className="author">{quote.author}</span>
           </p>
         ) : (
           <p className="slide-up">Loading quote...</p>
@@ -125,11 +112,9 @@ export default function Home() {
           font-weight: bold;
           color: #00ffcc;
           transition: color 0.3s;
-          text-decoration: none;
         }
         .author:hover {
           color: #00bfff;
-          text-decoration: underline;
         }
 
         /* Animations */
