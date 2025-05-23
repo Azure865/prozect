@@ -25,11 +25,9 @@ export default function Home({ quote, currentDate }) {
   return (
     <div className="container">
       <div className="card">
-        <h1>👋 Welcome!</h1>
-        <p>
-          Today is <span className="date">{currentDate}</span>
-        </p>
-        <p>Here’s your quote of the day:</p>
+        <h1>
+          Quote fot <span className="date">{currentDate}</span>
+        </h1>
         <p className="quote">
           “{quote.text}” — <span className="author">{quote.author}</span>
         </p>
