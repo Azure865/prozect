@@ -2,42 +2,64 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
   const [count, setCount] = useState(null);
-  const [showWarning, setShowWarning] = useState(false);
+  const [quote, setQuote] = useState(null);
+  const [currentDate, setCurrentDate] = useState("");
 
   useEffect(() => {
-    const refreshCount =
-      parseInt(sessionStorage.getItem("refreshCount") || "0", 10) + 1;
-    sessionStorage.setItem("refreshCount", refreshCount);
-
-    if (refreshCount > 5) {
-      setShowWarning(true);
-      return;
-    }
-
     async function fetchCount() {
       const res = await fetch("/api/track");
       const data = await res.json();
       setCount(data.count);
     }
     fetchCount();
+
+    const today = new Date();
+    const todayStr = today.toISOString().split("T")[0];
+    const formattedDate = today.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+    setCurrentDate(formattedDate);
+
+    const lastQuoteDate = localStorage.getItem("lastQuoteDate");
+
+    if (lastQuoteDate !== todayStr) {
+      async function fetchQuote() {
+        try {
+          const res = await fetch("http://api.quotable.io/random");
+          const data = await res.json();
+          setQuote({ text: data.content, author: data.author });
+          localStorage.setItem("dailyQuote", JSON.stringify(data));
+          localStorage.setItem("lastQuoteDate", todayStr);
+        } catch (error) {
+          setQuote({ text: "Error fetching quote.", author: "" });
+        }
+      }
+      fetchQuote();
+    } else {
+      const stored = localStorage.getItem("dailyQuote");
+      if (stored) {
+        const data = JSON.parse(stored);
+        setQuote({ text: data.content, author: data.author });
+      }
+    }
   }, []);
 
   return (
     <div className="container">
       <div className="card">
-        <h1>👋 Welcome!</h1>
-        {showWarning ? (
-          <p className="warning">
-            Your refresh does nothing to me, it does not make the counter go
-            up!!!
-          </p>
-        ) : count !== null ? (
+        <h1>
+          Quote for <span className="date">{currentDate}</span>
+        </h1>
+        {count !== null ? (
           <>
-            <p className="highlight">
-              Hello! You are the <span className="number">#{count}</span>{" "}
-              visitor to this site.
-            </p>
-            <p>We’re glad to have you here. 🎉</p>
+            <p></p>
+            {quote && (
+              <p className="quote">
+                “{quote.text}” — <span className="author">{quote.author}</span>
+              </p>
+            )}
           </>
         ) : (
           <p>Loading your visitor number...</p>
@@ -79,11 +101,19 @@ export default function Home() {
           color: #00ffcc;
           font-weight: bold;
         }
-        .warning {
-          margin-top: 1.5rem;
-          font-size: 1.25rem;
-          color: #ff5555;
+        .date {
+          font-weight: bold;
+          color: #ffa500;
+        }
+        .quote {
+          margin-top: 2rem;
           font-style: italic;
+          font-size: 1.2rem;
+          color: #cccccc;
+        }
+        .author {
+          font-weight: bold;
+          color: #00ffcc;
         }
       `}</style>
     </div>
