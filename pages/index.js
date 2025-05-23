@@ -26,7 +26,7 @@ export default function Home({ quote, currentDate }) {
     <div className="container">
       <div className="card">
         <h1>
-          Quote fot <span className="date">{currentDate}</span>
+          Quote for <span className="date">{currentDate}</span>
         </h1>
         <p className="quote">
           “{quote.text}” — <span className="author">{quote.author}</span>
