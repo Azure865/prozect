@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // ... other config options
+  output: "export",
   devIndicators: false,
+  distDir: "docs",
 };
 
 module.exports = nextConfig;
