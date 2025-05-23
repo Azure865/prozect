@@ -19,7 +19,7 @@ export default function Home() {
     if (lastQuoteDate !== todayStr) {
       async function fetchQuote() {
         try {
-          const res = await fetch("https://api.quotable.io/random");
+          const res = await fetch("http://api.quotable.io/random");
           const data = await res.json();
           setQuote({ text: data.content, author: data.author });
           localStorage.setItem("dailyQuote", JSON.stringify(data));
