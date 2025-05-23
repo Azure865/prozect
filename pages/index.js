@@ -1,58 +1,38 @@
-import { useEffect, useState } from "react";
+// pages/index.js
+export async function getStaticProps() {
+  const res = await fetch("http://api.quotable.io/random");
+  const data = await res.json();
 
-export default function Home() {
-  const [quote, setQuote] = useState(null);
-  const [currentDate, setCurrentDate] = useState("");
+  const today = new Date();
+  const formattedDate = today.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 
-  useEffect(() => {
-    const today = new Date();
-    const todayStr = today.toISOString().split("T")[0];
-    const formattedDate = today.toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-    setCurrentDate(formattedDate);
+  return {
+    props: {
+      quote: {
+        text: data.content,
+        author: data.author,
+      },
+      currentDate: formattedDate,
+    },
+  };
+}
 
-    const lastQuoteDate = localStorage.getItem("lastQuoteDate");
-
-    if (lastQuoteDate !== todayStr) {
-      async function fetchQuote() {
-        try {
-          const res = await fetch("http://api.quotable.io/random");
-          const data = await res.json();
-          setQuote({ text: data.content, author: data.author });
-          localStorage.setItem("dailyQuote", JSON.stringify(data));
-          localStorage.setItem("lastQuoteDate", todayStr);
-        } catch (error) {
-          setQuote({ text: "Error fetching quote.", author: "" });
-        }
-      }
-      fetchQuote();
-    } else {
-      const stored = localStorage.getItem("dailyQuote");
-      if (stored) {
-        const data = JSON.parse(stored);
-        setQuote({ text: data.content, author: data.author });
-      }
-    }
-  }, []);
-
+export default function Home({ quote, currentDate }) {
   return (
     <div className="container">
       <div className="card">
-        <h1>
-          {" "}
-          Quote for <span className="date">{currentDate}</span>{" "}
-        </h1>
-        <p></p>
-        {quote ? (
-          <p className="quote">
-            “{quote.text}” — <span className="author">{quote.author}</span>
-          </p>
-        ) : (
-          <p>Loading quote...</p>
-        )}
+        <h1>👋 Welcome!</h1>
+        <p>
+          Today is <span className="date">{currentDate}</span>
+        </p>
+        <p>Here’s your quote of the day:</p>
+        <p className="quote">
+          “{quote.text}” — <span className="author">{quote.author}</span>
+        </p>
       </div>
       <style jsx>{`
         :global(body) {
