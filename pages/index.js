@@ -20,6 +20,11 @@ export async function getStaticProps() {
   };
 }
 
+const getWikipediaLink = (author) => {
+  const encodedAuthor = encodeURIComponent(author);
+  return `https://en.wikipedia.org/wiki/${encodedAuthor}`;
+};
+
 export default function Home({ quote, currentDate }) {
   return (
     <div className="container">
@@ -27,9 +32,21 @@ export default function Home({ quote, currentDate }) {
         <h1>
           Quote for <span className="date">{currentDate}</span>
         </h1>
-        <p className="quote">
-          “{quote.text}” — <span className="author">{quote.author}</span>
-        </p>
+        {quote ? (
+          <p className="quote slide-up">
+            “{quote.text}” —{" "}
+            <a
+              href={getWikipediaLink(quote.author)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="author"
+            >
+              {quote.author}
+            </a>
+          </p>
+        ) : (
+          <p className="slide-up">Loading quote...</p>
+        )}
       </div>
       <style jsx>{`
         :global(body) {
