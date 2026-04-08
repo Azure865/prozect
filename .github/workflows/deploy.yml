@@ -1,9 +1,9 @@
 name: Daily Deploy
 
-# on:
-#   schedule:
-#     - cron: "0 0 * * *"  # Runs every day at midnight UTC
-#   workflow_dispatch:     # Allows manual trigger
+on:
+  schedule:
+    - cron: "15 18 * * *"  # Runs every day at midnight Nepal time (00:00 NPT = 18:15 UTC)
+  workflow_dispatch:     # Allows manual trigger
 
 jobs:
   build-deploy:
