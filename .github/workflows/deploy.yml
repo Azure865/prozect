@@ -5,6 +5,9 @@ on:
     - cron: "15 18 * * *"  # Runs every day at midnight Nepal time (00:00 NPT = 18:15 UTC)
   workflow_dispatch:     # Allows manual trigger
 
+permissions:
+  contents: write
+
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
@@ -23,9 +26,6 @@ jobs:
 
       - name: Build project
         run: npm run build
-
-      # - name: Export static site
-      #   run: npm run export
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
