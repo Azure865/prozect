@@ -32,9 +32,27 @@ export default function Home({ quote, currentDate }) {
 
   const handleCopyQuote = () => {
     const fullQuote = `${quote.text} — ${quote.author}`;
-    navigator.clipboard.writeText(fullQuote);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(fullQuote).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      });
+    } else {
+      const textArea = document.createElement("textarea");
+      textArea.value = fullQuote;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-9999px";
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand("copy");
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch (err) {
+        console.error("Failed to copy:", err);
+      }
+      document.body.removeChild(textArea);
+    }
   };
 
   return (
